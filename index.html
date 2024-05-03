@@ -1,93 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enter and Read Data</title>
+
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #000;
+        color: #fff;
+    }
+    
+    .container {
+        display: flex;
+    }
+    
+    .left, .right {
+        flex: 1;
+        padding: 0 20px;
+    }
+    
+    .left {
+        border-right: 1px solid #444;
+    }
+    
+    h1 {
+        margin-bottom: 20px;
+        color: #fff;
+    }
+    
+    form {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #fff;
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #444;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #222;
+        color: #fff;
+    }
+    
+    button,
+    input[type="submit"] {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    button:hover,
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+    
+    #userData {
+        margin-top: 20px;
+        color: #fff;
+    }
+    
+    #userData p {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        color: #fff; /* Text color */
+    }
+    
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #444; /* Border color */
+    }
+    
+    th {
+        background-color: #007bff; /* Header background color */
+    }
+    
+    tr:nth-child(even) {
+        background-color: #222; /* Even row background color */
+    }
+    
+    tr:hover {
+        background-color: #333; /* Hover row background color */
+    }
+    
+    </style>
+
 </head>
-
-<style>
-    body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #000;
-    color: #fff;
-}
-
-.container {
-    display: flex;
-}
-
-.left, .right {
-    flex: 1;
-    padding: 0 20px;
-}
-
-.left {
-    border-right: 1px solid #444;
-}
-
-h1 {
-    margin-bottom: 20px;
-    color: #fff;
-}
-
-form {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #fff;
-}
-
-input[type="text"],
-input[type="number"],
-select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #444;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #222;
-    color: #fff;
-}
-
-button,
-input[type="submit"] {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover,
-input[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-#userData {
-    margin-top: 20px;
-    color: #fff;
-}
-
-#userData p {
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-
-</style>
+           
 
 <body>
+
     <div class="container">
+
         <div class="left">
+
             <h1>Enter Data</h1>
+
             <form id="dataForm">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name"><br><br>
@@ -97,20 +128,24 @@ input[type="submit"]:hover {
                 <select id="gender" name="gender">
                     <option value="male">Male</option>
                     <option value="female">Female</option>
-                    <option value="other">Other</option>
                 </select><br><br>
                 <input type="submit" value="Submit" class="sub" id="submit">
+                <p id="message"></p> 
             </form>
+
         </div>
+
         <div class="right">
+
             <h1>Read Data</h1>
             <form id="readForm">
-                <label for="searchName">Enter Name to Retrieve Data:</label>
-                <input type="text" id="searchName" name="searchName">
                 <button type="button" id="searchButton">Search</button>
             </form>
             <div id="userData"></div>
+
+
         </div>
+
     </div>
 
     <script type="module">
@@ -129,46 +164,66 @@ input[type="submit"]:hover {
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        
+        
+// Function to read data
+function readData() {
+    const userDataRef = ref(db, 'user');
+
+    get(userDataRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const userData = snapshot.val();
+            let tableHTML = '<table><tr><th>ID</th><th>Name</th><th>Email</th><th>Gender</th></tr>';
+
+            // Loop through each user data and create table rows
+            for (const [userId, user] of Object.entries(userData)) {
+                tableHTML += `<tr>
+                    <td>${user.Id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>${user.Gender}</td>
+                </tr>`;
+            }
+
+            tableHTML += '</table>';
+            document.getElementById('userData').innerHTML = tableHTML;
+        } else {
+            document.getElementById('userData').innerHTML = "No data found.";
+        }
+    }).catch((error) => {
+        console.error("Error reading data: ", error);
+    });
+}
 
         // Function to submit data
-        function submitData(e) {
-            e.preventDefault();
+function submitData(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('name').value;
+    const age = document.getElementById('age').value;
+    const gender = document.getElementById('gender').value;
 
-            const name = document.getElementById('name').value;
-            const age = document.getElementById('age').value;
-            const gender = document.getElementById('gender').value;
+    const userRef = ref(db, 'user/' + name);
 
-            set(ref(db, 'user/' + name), {
+    get(userRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            document.getElementById('message').innerText = "User already exists. Cannot submit data.";
+        } else {
+            set(userRef, {
                 username: name,
                 email: age,
-                PhoneNumber: gender
+                Gender: gender
             }).then(() => {
-                alert("Data submitted successfully!");
+                document.getElementById('message').innerText = "Data submitted successfully!";
                 document.getElementById('dataForm').reset();
             }).catch((error) => {
                 console.error("Error writing document: ", error);
             });
         }
-
-        // Function to read data
-        function readData() {
-            const searchName = document.getElementById('searchName').value;
-
-            get(child(ref(db, 'user'), searchName)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    document.getElementById('userData').innerHTML = `
-                        <p><strong>Name:</strong> ${userData.username}</p>
-                        <p><strong>Email:</strong> ${userData.email}</p>
-                        <p><strong>Phone Number:</strong> ${userData.PhoneNumber}</p>
-                    `;
-                } else {
-                    document.getElementById('userData').innerHTML = "No data found for this name.";
-                }
-            }).catch((error) => {
-                console.error("Error reading document: ", error);
-            });
-        }
+    }).catch((error) => {
+        console.error("Error checking if user exists: ", error);
+    });
+}
 
         // Attach event listener to the submit button
         document.getElementById('submit').addEventListener('click', submitData);
@@ -176,5 +231,6 @@ input[type="submit"]:hover {
         // Attach event listener to the search button
         document.getElementById('searchButton').addEventListener('click', readData);
     </script>
+
 </body>
 </html>
