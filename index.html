@@ -1,225 +1,134 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Read, Write, Update, Delete</title>
-  </head>
-  <body>
-    <div id="container">
+<html>
+    <head>
+        <title>Firebase_form</title>
 
-      <div id="title_container">
-        <span id="content">
-          <h2 class="typedtext"></h2>
-        </span>
-        <h2 id="sub_header"> with Firebase Database </h2>
-      </div>
+        <style>
+            *
+            {
+                margin: 0;
+                padding: 0;
+                font-family: sans-serif;
+                box-sizing: border-box;
+            }
+            body
+            {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                background: url(bg.jpg);
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+            .box
+            {
+                padding: 20px 30px;
+                width: 300px;
+                height: 400px;
+                backdrop-filter: blur(50px);
+                border-radius: 5px;
+                background: rgba(49, 49, 49, .2);
+                border: 1px solid rgba(255, 255, 255, .5);
+            }
+            .box .form
+            {
+                padding: 10px 20px;
+            }
+            .box .form h2
+            {
+                text-align: center;
+                color: #fff;
+            }
+            .box .form form
+            {
+                margin-top: 50px;
+                align-items: center;
+            }
+            .box .form form .inputbox input
+            {
+                padding: 10px 20px;
+                border: none;
+                outline: none;
+                background: none;
+                border-bottom: 1px solid #12151e;
+                margin-bottom: 30px;
+                color: #fff;
+            }
+            .box .form form .inputbox span
+            {
+                position: absolute;
+                transform: translateY(-80px);
+                font-size: 14px;
+                color: #fff;
+            }
+            .box .form form .sub
+            {
+                padding: 10px 20px;
+                color: #fff;
+                border: none;
+                outline: none;
+                background: #0cc0df;
+                cursor: pointer;
+                font-size: 16px;
+            }
+        </style>
+        
+    </head>
+    <body>
 
-      <div id="form_container">
-        <input placeholder="Email" type="email" id="email"/>
-        <input placeholder="Password" type="password" id="password"/>
-        <input placeholder="Username" type="name" id="username"/>
-        <input placeholder="Say Something 🤣😂" type="text" id="say_something"/>
-        <input placeholder="Favourite Food" type="text" id="favourite_food"/>
-      </div>
+        <div class="box">
+            <div class="form">
+                <h2>Login Form</h2>
+                <form>
+                    <div class="inputbox">
+                        <input type="text" value="" id="username" required>
+                        <span>username</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="email" value="" id="email" required>
+                        <span>E-mail</span>
+                    </div>
+                    <div class="inputbox">
+                        <input type="text" value="" id="phone" required>
+                        <span>Phone Number</span>
+                    </div>
+                    <input type="submit" value="submit" class="sub" id="submit">
+                </form>
+            </div>
+        </div>
 
-      <div id="button_container">
-        <button id="submit" onclick="save()"> SUBMIT </button>
-      </div>
+        <script>
+            
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+            import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-database.js";
+  
+            const firebaseConfig = {
+                apiKey: "AIzaSyA0dQmm3-Ku1vFgumA77S9abQ-WdZvP6C8",
+                authDomain: "read-d6f2b.firebaseapp.com",
+                databaseURL: "https://read-d6f2b-default-rtdb.firebaseio.com",
+                projectId: "read-d6f2b",
+                storageBucket: "read-d6f2b.appspot.com",
+                messagingSenderId: "393601857791",
+                appId: "1:393601857791:web:a29aa96421c98a596e34ca"
+            };
 
-    </div>
-  </body>
+            const app = initializeApp(firebaseConfig);
 
-  <style>
-    /* https://coolors.co/003049-d62828-f77f00-fcbf49-eae2b7 */
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #FCBF49;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+            const db = getDatabase(app);
 
-    #container {
-      width: 35%;
-      height: 400px;
+             document.getElementById("submit").addEventListener('click', function(e){
+              e.preventDefault();
+              set(ref(db, 'user/' + document.getElementById("username").value),
+              {
+   
+                username: document.getElementById("username").value,
+                email: document.getElementById("email").value,
+                PhoneNumber: document.getElementById("phone").value
 
-      background-color: #fff;
-      border-radius: 10px;
-      outline: 1px solid #fff;
-      outline-offset: 3px;
-      -moz-outline-radius: 10px;
+              });
+                alert("Login Sucessfull  !");
+             })
+        </script>
 
-    }
-
-    #title_container {
-      width: 100%;
-      height: 5%;
-
-      text-align: center;
-      float: left;
-      margin: 0;
-
-      color: #003049;
-      text-transform: uppercase;
-      font-family: Verdana;
-      font-size: 12px;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 50px;
-      margin-bottom: 50px;
-
-      color: #003049;
-    }
-
-
-    #form_container {
-      width: 100%;
-      height: 50%;
-
-      float: left;
-      margin-top: 2px;
-      padding-left: 100px;
-      padding-right: 100px;
-
-      box-sizing: border-box;
-    }
-
-    #form_container * {
-      width: 100%;
-      height: 30px;
-
-      border: none;
-      outline: none;
-      border-left: 2px solid #003049;
-      background-color: #EBF8FF;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-
-      margin-top: 3px;
-      float: left;
-
-    }
-
-    #button_container {
-      width: 100%;
-      height: 5%;
-
-      text-align: center;
-      float: left;
-      margin-bottom: 50px;
-
-      font-family: Verdana;
-
-    }
-
-    #submit {
-      width: 25%;
-      height: 35px;
-
-      background-color: #D62828;
-      border-radius: 5px;
-      font-weight: bold;
-      color: #fff;
-      border: none;
-      outline: none;
-      cursor: pointer;
-    }
-
-
-    #content {
-      width: 105px;
-      height: 100%;
-
-      margin: 0;
-      padding: 0;
-      float: left;
-
-      color: #D62828;
-      margin-right: 5px;
-    }
-
-    .typedtext {
-      display: inline-block;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding-bottom: 5px;
-      border-bottom: 2px solid #D62828;
-
-    }
-
-
-  </style>
-  <script>
-    function typingEffect() {
-      const contactTexts = shuffleArray(['Read', 'Write', 'Update', 'Delete']);
-      const typedtext = document.getElementsByClassName("typedtext")[0];
-      let removing = false;
-      let idx = char = 0;
-
-      setInterval(() => { // We define the interval of the typing speed
-
-          // If we do not reach the limit, we insert characters in the html
-          if (char < contactTexts[idx].length) typedtext.innerHTML += contactTexts[idx][char];
-
-          // 15*150ms = time before starting to remove characters
-          if (char == contactTexts[idx].length + 15) removing = true;
-
-          // Removing characters, the last one always
-          if (removing) typedtext.innerHTML = typedtext.innerHTML.substring(0, typedtext.innerHTML.length - 1);
-
-          char++; // Next character
-
-          // When there is nothing else to remove
-          if (typedtext.innerHTML.length === 0) {
-
-              // If we get to the end of the texts we start over
-              if (idx === contactTexts.length - 1) idx = 0
-              else idx++;
-
-              char = 0; // Start the next text by the first character
-              removing = false; // No more removing characters
-          }
-
-      }, 150); // Typing speed, 150 ms
-
-    }
-      typingEffect();
-      function shuffleArray(array) {
-          let currentIndex = array.length,
-              temporaryValue, randomIndex;
-
-          // While there remain elements to shuffle...
-          while (0 !== currentIndex) {
-
-              // Pick a remaining element...
-              randomIndex = Math.floor(Math.random() * currentIndex);
-              currentIndex -= 1;
-
-              // And swap it with the current element.
-              temporaryValue = array[currentIndex];
-              array[currentIndex] = array[randomIndex];
-              array[randomIndex] = temporaryValue;
-          }
-
-          return array;
-      }
-  </script>
-
-
-  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js"></script>
-  <script src="index.js"></script>
-
+    </body>
 </html>
-
-
-    
